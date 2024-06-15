@@ -15,7 +15,7 @@ To install Bootstrap using this script, follow these steps:
 2. Run the following command to download and execute the installation script:
 
    ```bash
-   curl -sS https://raw.githubusercontent.com/5kipp3rm/.dotfiles/main/install.sh | bash
+   curl -sS https://raw.githubusercontent.com/5kipp3rm/.dotfiles/initial/bootstrap.sh | bash
    ```
 
 
