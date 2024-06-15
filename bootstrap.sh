@@ -7,13 +7,21 @@ current_os=$(get_os)
 
 # Print the result
 echo "You are on $current_os."
-
+# 
+symlink() {
+  file=$1
+  link=$2
+  if [ ! -e "$link" ]; then
+    echo "-----> Symlinking your new $link"
+    ln -s $file $link
+  fi
+}
 # installing tmux application
 #### $HOME/.config/.tmux/
 # ln -s .dotfiles/.config/.tmux/ .tmux
 # ln -s .dotfiles/.config/.tmux/.tmux.conf .tmux.conf
 #### $HOME/.config/.shell/
-de
+
 #### $HOME/.config/.ssh/
 #### $HOME/.config/.tmux/
 #### $HOME/.config/.vim/
