@@ -1,9 +1,66 @@
 #!/usr/bin/env bash
 
+
+
+###############################################################################
+# Remote and local dotsh_utils
+###############################################################################
+REMOTE_UTILS_URL="https://raw.githubusercontent.com/5kipp3rm/dotfiles/initial/dotsh_utils.sh"
+LOCAL_UTILS_FILE="dotsh_utils.sh"
+
 # Ensure that the following actions
 # are made relative to this file's path.
-cd "$(dirname "${BASH_SOURCE[0]}")" && . "utils.sh"
+cd "$(dirname "${BASH_SOURCE[0]}")"
+
+###############################################################################
+# download dotsh_utils
+###############################################################################
+download_utils() {
+    echo "Downloading $LOCAL_UTILS_FILE from $REMOTE_UTILS_URL..."
+    curl -L -o "$LOCAL_UTILS_FILE" "$REMOTE_UTILS_URL"
+    if [ $? -ne 0 ]; then
+        echo "Failed to download $LOCAL_UTILS_FILE"
+        exit 1
+    fi
+}
+
+# Check if utils.sh exists locally
+if [ ! -f "$LOCAL_UTILS_FILE" ]; then
+    echo "$LOCAL_UTILS_FILE not found locally."
+    download_utils
+else
+    echo "$LOCAL_UTILS_FILE found locally."
+fi
+
+# Source the utils.sh file
+. "$LOCAL_UTILS_FILE"
+
+# Proceed with the rest of the script
+echo "Proceeding with the rest of the bootstrap script..."
+
+exit
 current_os=$(get_os)
+###############################################################################
+# Clone dotsh 
+###############################################################################
+clone_dotfiles_repo() {
+    REPO_URL=$1
+    TARGET_DIR="${HOME}/.dotfiles"
+
+    # Check if the repository URL is provided
+    if [ -z "$REPO_URL" ]; then
+        echo "Usage: clone_dotfiles_repo <repository_url>"
+        return 1
+    fi
+
+    # Create the target directory if it doesn't exist
+    if [ ! -d "$TARGET_DIR" ]; then
+        mkdir -p "$TARGET_DIR"
+    fi
+
+    # Clone the repository into the target directory
+    git clone "$REPO_URL" "$TARGET_DIR"
+}
 
 # Print the result
 echo "You are on $current_os."
