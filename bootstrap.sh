@@ -7,7 +7,17 @@ current_os=$(get_os)
 
 # Print the result
 echo "You are on $current_os."
-# 
+# Backup function
+backup() {
+  target=$1
+  if [ -e "$target" ]; then
+    if [ ! -L "$target" ]; then
+      mv "$target" "$target.backup"
+      echo "-----> Moved your old $target config file to $target.backup"
+    fi
+  fi
+}
+# symlink create with output
 symlink() {
   file=$1
   link=$2
