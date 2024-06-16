@@ -16,27 +16,27 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 # download dotsh_utils
 ###############################################################################
 download_utils() {
-    echo "Downloading $LOCAL_UTILS_FILE from $REMOTE_UTILS_URL..."
-    curl -L -o "$LOCAL_UTILS_FILE" "$REMOTE_UTILS_URL"
+    printf "Downloading %s from %s...\n" "$LOCAL_UTILS_FILE" "$REMOTE_UTILS_URL"
+    curl -s -L -o "$LOCAL_UTILS_FILE" "$REMOTE_UTILS_URL"
     if [ $? -ne 0 ]; then
-        echo "Failed to download $LOCAL_UTILS_FILE"
+        printf "Failed to download %s\n" "$LOCAL_UTILS_FILE"
         exit 1
     fi
 }
 
 # Check if utils.sh exists locally
 if [ ! -f "$LOCAL_UTILS_FILE" ]; then
-    echo "$LOCAL_UTILS_FILE not found locally."
+    printf "%s not found locally.\n" "$LOCAL_UTILS_FILE"
     download_utils
 else
-    echo "$LOCAL_UTILS_FILE found locally."
+    printf "%s found locally.\n" "$LOCAL_UTILS_FILE"
 fi
 
 # Source the utils.sh file
 . "$LOCAL_UTILS_FILE"
 
 # Proceed with the rest of the script
-echo "Proceeding with the rest of the bootstrap script..."
+printf "Proceeding with the rest of the bootstrap script...\n"
 
 exit
 current_os=$(get_os)
