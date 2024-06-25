@@ -25,12 +25,8 @@ download_utils() {
 }
 
 # Check if utils.sh exists locally
-if [ ! -f "$LOCAL_UTILS_FILE" ]; then
-    printf "%s not found locally.\n" "$LOCAL_UTILS_FILE"
-    download_utils
-else
-    printf "%s found locally.\n" "$LOCAL_UTILS_FILE"
-fi
+printf "[INFO] Downloading %s locally.\n" "$LOCAL_UTILS_FILE"
+download_utils
 
 # Source the utils.sh file
 . "$LOCAL_UTILS_FILE"
@@ -44,7 +40,7 @@ current_os=$(get_os)
 # Backup function
 backup 
 # Clone Repository
-clone_dotfiles_repo ${REMOTE_GIT_URL} testing123
+clone_dotfiles_repo ${REMOTE_GIT_URL}
 # Print the result
 echo "You are on $current_os."
 # symlink create with output
