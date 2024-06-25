@@ -1,0 +1,99 @@
+{
+    "applications": {
+        "terraform": {
+            "url": "https://www.terraform.io/downloads.html",
+            "plugins": [
+                {
+                    "name": "tfenv",
+                    "url": "https://github.com/tfutils/tfenv"
+                },
+                {
+                    "name":"tflint",
+                    "url":"https://github.com/terraform-linters/tflint"
+                }
+            ]
+        },
+        "helm": {
+            "url": "https://helm.sh/docs/intro/install/",
+            "plugins": [
+                {
+                    "name": "diff",
+                    "url": "https://github.com/databus23/helm-diff"
+                },
+                {
+                    "name": "secrets",
+                    "url": "https://github.com/jkroepke/helm-secrets"
+                }
+            ]
+        },
+        "kubectl": {
+            "url": "https://kubernetes.io/docs/tasks/tools/install-kubectl/",
+            "plugins": [
+                {
+                    "name": "krew",
+                    "url": "https://krew.sigs.k8s.io/"
+                }
+            ]
+        },
+        "ansible": {
+            "url": "https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html",
+            "plugins": []
+        },
+        "docker": {
+            "url": "https://docs.docker.com/get-docker/",
+            "plugins": []
+        },
+        "vagrant": {
+            "url": "https://www.vagrantup.com/downloads",
+            "plugins": []
+        },
+        "packer": {
+            "url": "https://www.packer.io/downloads",
+            "plugins": []
+        },
+        "awscli": {
+            "url": "https://aws.amazon.com/cli/",
+            "plugins": []
+        },
+        "gcloud": {
+            "url": "https://cloud.google.com/sdk/docs/install",
+            "plugins": []
+        },
+        "azcli": {
+            "url": "https://docs.microsoft.com/en-us/cli/azure/install-azure-cli",
+            "plugins": []
+        },
+        "consul": {
+            "url": "https://www.consul.io/downloads",
+            "plugins": []
+        },
+        "vault": {
+            "url": "https://www.vaultproject.io/downloads",
+            "plugins": []
+        },
+        "nomad": {
+            "url": "https://www.nomadproject.io/downloads",
+            "plugins": []
+        },
+        "kops": {
+            "url": "https://github.com/kubernetes/kops#installing",
+            "plugins": []
+        },
+        "skaffold": {
+            "url": "https://skaffold.dev/docs/install/",
+            "plugins": []
+        },
+        "jx": {
+            "url": "https://jenkins-x.io/docs/getting-started/install/",
+            "plugins": []
+        },
+        "kubeseal": {
+            "url": "https://github.com/bitnami-labs/sealed-secrets#kubeseal",
+            "plugins": []
+        },
+        "kustomize": {
+            "url": "https://kubectl.docs.kubernetes.io/installation/kustomize/",
+            "plugins": []
+        }
+    }
+}

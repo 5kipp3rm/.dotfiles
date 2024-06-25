@@ -4,10 +4,7 @@
 #####################################
 # SDSH_PATH = "~/.dotfiles"
 # SDSH_CONFIG = "~/.dotfiles/.config"
-if [ -z "${SDSH_PATH-}" ]; then 
-    SDSH_PATH="${HOME}/.dotfiles"
-    export SDSH_PATH
-fi
+
 if [ -z "${DOTSH_PATH-}" ]; then 
     DOTSH_PATH="${HOME}/.dotfiles"
     export DOTSH_PATH

@@ -1,4 +1,53 @@
 #!/bin/bash
+###############################################################################
+# Global Define colors using ANSI escape sequences
+###############################################################################
+
+COLOR_RED='\033[0;31m'      # Red
+COLOR_YELLOW='\033[0;33m'   # Yellow
+COLOR_BLUE='\033[0;34m'     # Blue
+COLOR_GREEN='\033[0;32m'    # Green
+COLOR_RESET='\033[0m'       # Reset color
+
+
+logger() {
+    local log_level=$1
+    local message=$2
+    local timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+
+    # Define log file path (change this to your desired log file path)
+    local log_file="/var/log/my_script.log"
+
+    # Check if log file exists, create it if it doesn't
+    if [ ! -f "$log_file" ]; then
+        touch "$log_file" || { printf "Error: Could not create log file %s\n" "$log_file"; return 1; }
+    fi
+
+    # Determine color based on log level
+    case "$log_level" in
+        "INFO")
+            local log_color=$COLOR_GREEN
+            ;;
+        "WARN")
+            local log_color=$COLOR_YELLOW
+            ;;
+        "ERROR")
+            local log_color=$COLOR_RED
+            ;;
+        "DEBUG")
+            local log_color=$COLOR_BLUE
+            ;;
+        *)
+            local log_color=$COLOR_RESET  # Default color
+            ;;
+    esac
+
+    # Output to log file with timestamp and log level
+    printf "[%s] [%s] - %s\n" "$timestamp" "$log_level" "$message" >> "$log_file"
+
+    # Output to standard output with color, timestamp, and log level
+    printf "[%s] [%b%s%b] - %s\n" "$timestamp" "$log_color" "$log_level" "$COLOR_RESET" "$message"
+}
 
 # Function to check if the user's response is "yes"
 answer_is_yes() {
@@ -228,9 +277,9 @@ print_question() {
 print_result() {
     # Prints the success or failure of a command
     if [ "$1" -eq 0 ]; then
-        print_success "$2"
+        logger "INFO" "$2"
     else
-        print_error "$2"
+        logger "ERROR" "$2"
     fi
 
     return "$1"
@@ -239,13 +288,13 @@ print_result() {
 # Function to print success message
 print_success() {
     # Prints a success message in green
-    print_in_green "   [✔] $1\n"
+    logger "INFO" "[✔] $1\n"
 }
 
 # Function to print warning message
 print_warning() {
     # Prints a warning message in yellow
-    print_in_yellow "   [!] $1\n"
+    logger "WARN" "[!] $1\n"
 }
 
 # Function to set a trap for signals
@@ -328,14 +377,14 @@ brew_install() {
 
     # Checks if Homebrew is installed
     if ! cmd_exists "brew"; then
-        print_error "$FORMULA_READABLE_NAME ('Homebrew' is not installed)"
+        logger "ERROR" "$FORMULA_READABLE_NAME ('Homebrew' is not installed)"
         return 1
     fi
 
     # If a tap is specified, ensures it is tapped
     if [ -n "$TAP_VALUE" ]; then
         if ! brew_tap "$TAP_VALUE"; then
-            print_error "$FORMULA_READABLE_NAME ('brew tap $TAP_VALUE' failed)"
+            logger "ERROR" "$FORMULA_READABLE_NAME ('brew tap $TAP_VALUE' failed)"
             return 1
         fi
     fi
@@ -343,7 +392,7 @@ brew_install() {
     # Installs or upgrades the formula
     # shellcheck disable=SC2086
     if brew $CMD list "$FORMULA" &> /dev/null; then
-        print_success "$FORMULA_READABLE_NAME"
+        logger "INFO"  "$FORMULA_READABLE_NAME"
     else
         execute "brew $CMD install $FORMULA $CMD_ARGUMENTS" "$FORMULA_READABLE_NAME"
     fi
@@ -423,4 +472,60 @@ opt_out_of_analytics() {
 
     print_result $? "Homebrew (opt-out of analytics)"
 
+}
+
+backupA() {
+  target=$1
+  if [ -e "$target" ]; then
+    if [ ! -L "$target" ]; then
+      mv "$target" "$target.backup"
+      echo "-----> Moved your old $target config file to $target.backup"
+    fi
+  fi
+}
+
+backup() {
+    USER_HOME=${1-${HOME}}
+    backup_dir=${2:-backup_files}
+
+    if [ ! -d "$backup_dir" ]; then
+        mkdir -p "$backup_dir"
+        logger "INFO" "Created backup directory: $backup_dir"
+    fi
+
+    # Use a pattern to include hidden files and directories
+    shopt -s dotglob
+    for target in "$USER_HOME"/* "$USER_HOME"/.[!.]*; do
+        if [ -e "$target" ]; then
+            if [ ! -L "$target" ]; then
+                relative_path="${target#$USER_HOME/}"
+                target_backup_dir="$backup_dir/$(dirname "$relative_path")"
+
+                mkdir -p "$target_backup_dir"
+                mv "$target" "$target_backup_dir/"
+                logger "INFO" "Moved $target to $target_backup_dir"
+            fi
+        fi
+    done
+    shopt -u dotglob
+}
+
+
+clone_dotfiles_repo() {
+    REPO_URL=$1
+    TARGET_DIR="${HOME}/"${2:-.dotfiles}""
+
+    # Check if the repository URL is provided
+    if [ -z "$REPO_URL" ]; then
+        echo "Usage: clone_dotfiles_repo <repository_url>"
+        return 1
+    fi
+
+    # Create the target directory if it doesn't exist
+    if [ ! -d "$TARGET_DIR" ]; then
+        mkdir -p "$TARGET_DIR"
+    fi
+
+    # Clone the repository into the target directory
+    git clone "$REPO_URL" "$TARGET_DIR"
 }

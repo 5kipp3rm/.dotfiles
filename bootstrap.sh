@@ -3,11 +3,11 @@
 
 
 ###############################################################################
-# Remote and local dotsh_utils
+# Global Variables and Remote and local dotsh_utils
 ###############################################################################
 REMOTE_UTILS_URL="https://raw.githubusercontent.com/5kipp3rm/dotfiles/initial/dotsh_utils.sh"
 LOCAL_UTILS_FILE="dotsh_utils.sh"
-
+REMOTE_GIT_URL="https://github.com/5kipp3rm/dotfiles.git"
 # Ensure that the following actions
 # are made relative to this file's path.
 cd "$(dirname "${BASH_SOURCE[0]}")"
@@ -16,10 +16,10 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 # download dotsh_utils
 ###############################################################################
 download_utils() {
-    printf "Downloading %s from %s...\n" "$LOCAL_UTILS_FILE" "$REMOTE_UTILS_URL"
+    printf "[INFO] Downloading %s from %s...\n" "$LOCAL_UTILS_FILE" "$REMOTE_UTILS_URL"
     curl -s -L -o "$LOCAL_UTILS_FILE" "$REMOTE_UTILS_URL"
     if [ $? -ne 0 ]; then
-        printf "Failed to download %s\n" "$LOCAL_UTILS_FILE"
+        printf "[ERROR] Failed to download %s\n" "$LOCAL_UTILS_FILE"
         exit 1
     fi
 }
@@ -34,46 +34,19 @@ fi
 
 # Source the utils.sh file
 . "$LOCAL_UTILS_FILE"
-
+logger "INFO" "Starting script..."
 # Proceed with the rest of the script
 printf "Proceeding with the rest of the bootstrap script...\n"
-
-exit
 current_os=$(get_os)
 ###############################################################################
 # Clone dotsh 
 ###############################################################################
-clone_dotfiles_repo() {
-    REPO_URL=$1
-    TARGET_DIR="${HOME}/.dotfiles"
-
-    # Check if the repository URL is provided
-    if [ -z "$REPO_URL" ]; then
-        echo "Usage: clone_dotfiles_repo <repository_url>"
-        return 1
-    fi
-
-    # Create the target directory if it doesn't exist
-    if [ ! -d "$TARGET_DIR" ]; then
-        mkdir -p "$TARGET_DIR"
-    fi
-
-    # Clone the repository into the target directory
-    git clone "$REPO_URL" "$TARGET_DIR"
-}
-
+# Backup function
+backup 
+# Clone Repository
+clone_dotfiles_repo ${REMOTE_GIT_URL} testing123
 # Print the result
 echo "You are on $current_os."
-# Backup function
-backup() {
-  target=$1
-  if [ -e "$target" ]; then
-    if [ ! -L "$target" ]; then
-      mv "$target" "$target.backup"
-      echo "-----> Moved your old $target config file to $target.backup"
-    fi
-  fi
-}
 # symlink create with output
 symlink() {
   file=$1
